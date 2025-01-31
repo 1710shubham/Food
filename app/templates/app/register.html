@@ -1,0 +1,52 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAYKA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Shanti&display=swap" rel="stylesheet"> <!-- Gujarati-style font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"> <!-- Clean modern font -->
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <img src="{% static 'images/food_logo.jpeg' %}" alt="Gujarati Food Logo">
+                <center><h3 style="color: red;">{{msg}}</h3></center>
+            
+            </div>
+            <form action="{% url 'auth_regi' %}" method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your FirstName" required>
+                </div> 
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="input-group">
+                    <label for="contact">Contact No:</label>
+                    <input type="tel" id="contact" name="contact" placeholder="Enter your Contact No" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="input-group">
+                    <label for="cpassword">Confirm Password:</label>
+                    <input type="password" id="cpassword" name="cpassword" placeholder="Enter your Confirm Password" required>
+                </div>
+                <button type="submit" class="login-btn" name="register">Register</button>
+                <div class="footer-text">
+                    <p>Do have an account? <a href="{% url 'loginpage' %}">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

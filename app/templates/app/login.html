@@ -1,0 +1,41 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAYKA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Shanti&display=swap" rel="stylesheet"> <!-- Gujarati-style font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"> <!-- Clean modern font -->
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <img src="{% static 'images/food_logo.jpeg' %}" alt="Gujarati Food Logo">
+                <center><h3 style="color: red;">{{msg}}</h3></center>
+
+            </div>
+            <form action="#" method="POST">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div class="footer-text">
+                    <p>Don't have an account? <a href="{% url 'register'%}">Register</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}
