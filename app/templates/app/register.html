@@ -14,9 +14,7 @@
     <div class="login-container">
         <div class="login-box">
             <div class="logo">
-                <img src="{% static 'images/food_logo.jpeg' %}" alt="Gujarati Food Logo">
-                <center><h3 style="color: red;">{{msg}}</h3></center>
-            
+                <img src="{% static 'images/food_logo.jpeg' %}" alt="Gujarati Food Logo">            
             </div>
             <form action="{% url 'auth_regi' %}" method="POST">
                 {% csrf_token %}
@@ -26,7 +24,8 @@
                 </div> 
                 <div class="input-group">
                     <label for="email">Email:</label>
-                    <input type="text" id="email" name="email" placeholder="Enter your email" required>
+                    <input type="text" id="email" name="email" placeholder="Enter your email">
+                    <p class="invalid-feedback" style="color: red;">{{email_msg}}</p>
                 </div>
                 <div class="input-group">
                     <label for="contact">Contact No:</label>
@@ -35,10 +34,12 @@
                 <div class="input-group">
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <p style="color: red;">{{p_m}}</p>
                 </div>
                 <div class="input-group">
                     <label for="cpassword">Confirm Password:</label>
                     <input type="password" id="cpassword" name="cpassword" placeholder="Enter your Confirm Password" required>
+                    <p style="color: red;">{{msg}}</p>
                 </div>
                 <button type="submit" class="login-btn" name="register">Register</button>
                 <div class="footer-text">

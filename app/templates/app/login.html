@@ -15,19 +15,21 @@
         <div class="login-box">
             <div class="logo">
                 <img src="{% static 'images/food_logo.jpeg' %}" alt="Gujarati Food Logo">
-                <center><h3 style="color: red;">{{msg}}</h3></center>
+                <center class="invalid-feedback" style="color: red;">{{email_msg}}</center>
 
             </div>
-            <form action="#" method="POST">
+            <form action="{% url 'auth_log' %}" method="POST">
                 {% csrf_token %}
 
                 <div class="input-group">
                     <label for="email">Email:</label>
                     <input type="text" id="email" name="email" placeholder="Enter your email" required>
+
                 </div>
                 <div class="input-group">
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <p style="color: red;">{{msg}}</p>
                 </div>
                 <button type="submit" class="login-btn">Login</button>
                 <div class="footer-text">
