@@ -82,3 +82,9 @@ def Index(request):
 def LogoutUser(request):
     request.session.flush()
     return redirect('loginpage')
+
+def Menu(request):
+    return render(request,"app/menu.html")
+
+def About(request):
+    return render(request,"app/about.html")
