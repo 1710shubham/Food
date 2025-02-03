@@ -59,7 +59,11 @@ def LoginUser(request):
             if check_password(password, user.Password):
                 request.session['Name'] = user.Name
                 request.session['Email'] = user.Email
-                return redirect('index')
+                request.session['Role'] = user.Role
+                if user.Role == 0:
+                 return redirect('index')
+                elif user.Role == 2:
+                    return redirect('dash')
             else:
                 message = "Password Doesn't match"
                 return render(request,"app/login.html",{'msg':message})
@@ -88,3 +92,7 @@ def Menu(request):
 
 def About(request):
     return render(request,"app/about.html")
+
+def Dash(request):
+     name = request.session.get('Name', '')
+     return render(request, "app/dash.html", {'name': name})
