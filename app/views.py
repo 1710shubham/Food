@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
@@ -59,7 +59,7 @@ def LoginUser(request):
             if check_password(password, user.Password):
                 request.session['Name'] = user.Name
                 request.session['Email'] = user.Email
-                return render(request, "app/index.html")
+                return redirect('index')
             else:
                 message = "Password Doesn't match"
                 return render(request,"app/login.html",{'msg':message})
@@ -74,4 +74,12 @@ def RegisterPage(request):
     return render(request,"app/register.html")
 
 def Index(request):
-    return render(request,"app/index.html")
+    if 'Name' not in request.session:
+        return redirect('loginpage')
+    
+    name=request.session.get('Name','')
+    return render(request,"app/index.html",{'name':name})
+
+def LogoutUser(request):
+    request.session.flush()
+    return redirect('loginpage')
