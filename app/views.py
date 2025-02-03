@@ -74,9 +74,8 @@ def RegisterPage(request):
     return render(request,"app/register.html")
 
 def Index(request):
-    # if 'Name' not in request.session:
-    #     return redirect('loginpage')
-    
+    if 'Name' not in request.session:
+        return redirect('loginpage')
     name=request.session.get('Name','')
     return render(request,"app/index.html",{'name':name})
 
