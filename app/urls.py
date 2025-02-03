@@ -7,7 +7,10 @@ urlpatterns = [
     path("auth_regi/",views.UserRegister,name="auth_regi"),
     path("auth_log/",views.LoginUser,name="auth_log"),
     path("index/",views.Index,name="index"),
+<<<<<<< HEAD
     path("logout/", views.LogoutUser, name="logout"),    
 
 
+=======
+>>>>>>> 70594fc16025e1aaca7e398a387b26ac06315d70
 ]

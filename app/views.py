@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import logout
 import re
 # Create your views here.
 
@@ -74,6 +75,7 @@ def RegisterPage(request):
     return render(request,"app/register.html")
 
 def Index(request):
+<<<<<<< HEAD
     if 'Name' not in request.session:
         return redirect('loginpage')
     name=request.session.get('Name','')
@@ -82,3 +84,9 @@ def Index(request):
 def LogoutUser(request):
     request.session.flush()
     return redirect('loginpage')
+=======
+    return render(request,"app/index.html")
+
+
+
+>>>>>>> 70594fc16025e1aaca7e398a387b26ac06315d70
