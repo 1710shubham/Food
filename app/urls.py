@@ -7,7 +7,4 @@ urlpatterns = [
     path("auth_regi/",views.UserRegister,name="auth_regi"),
     path("auth_log/",views.LoginUser,name="auth_log"),
     path("index/",views.Index,name="index"),
-    
-
-
 ]

@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import logout
 import re
 # Create your views here.
 
@@ -75,3 +76,6 @@ def RegisterPage(request):
 
 def Index(request):
     return render(request,"app/index.html")
+
+
+
