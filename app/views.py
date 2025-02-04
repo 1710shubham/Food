@@ -94,5 +94,6 @@ def About(request):
     return render(request,"app/about.html")
 
 def Dash(request):
+     total_users = User.objects.filter(Role=0).count()
      name = request.session.get('Name', '')
-     return render(request, "app/dash.html", {'name': name})
+     return render(request, "app/dash.html", {'name': name,'total_users':total_users})
