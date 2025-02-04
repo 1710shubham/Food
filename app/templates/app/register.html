@@ -1,54 +1,151 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAYKA</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Shanti&display=swap" rel="stylesheet"> <!-- Gujarati-style font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"> <!-- Clean modern font -->
-    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/food_logo.jpeg' %}" type="">
+    <!-- Google Fonts for Gujarati-style and Modern font -->
+    <link href="https://fonts.googleapis.com/css2?family=Shanti&display=swap" rel="stylesheet">
+    <!-- Gujarati-style font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <!-- Clean modern font -->
+
+    <!-- Linking CSS file -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+   /* Style for password input container */
+.password-container {
+    position: relative;
+    width: 100%;
+}
+.cpassword-container {
+    position: relative;
+    width: 100%;
+}
+
+/* Style for password visibility toggle icon */
+.password-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 60%; /* Adjusted to center vertically */
+    transform: translateY(-50%); /* Ensures the icon is perfectly centered */
+    cursor: pointer;
+    color: #2e1010; /* Default color for icon */
+}
+.cpassword-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 60%; /* Adjusted to center vertically */
+    transform: translateY(-50%); /* Ensures the icon is perfectly centered */
+    cursor: pointer;
+    color: #2e1010; /* Default color for icon */
+}
+/* Input field styling */
+.input-group input {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding-right: 40px; /* Space for the icon */
+}
+
+/* Optional: Style for error messages */
+.text-red {
+    color: red;
+    font-size: 14px;
+}
+
+    </style>
 </head>
+
 <body>
+    <!-- Login Container -->
     <div class="login-container">
         <div class="login-box">
             <div class="logo">
-                <img src="{% static 'images/food_logo.jpeg' %}" alt="Gujarati Food Logo">            
+                <img src="{% static 'images/food_logo.jpeg' %}" alt="Gujarati Food Logo">
             </div>
+
+            <!-- Registration Form -->
             <form action="{% url 'auth_regi' %}" method="POST">
                 {% csrf_token %}
+
+                <!-- Name Input -->
                 <div class="input-group">
                     <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your FirstName" required>
-                </div> 
+                    <input type="text" id="name" name="name" placeholder="Enter your First Name" required>
+                </div>
+
+                <!-- Email Input -->
                 <div class="input-group">
                     <label for="email">Email:</label>
-                    <input type="text" id="email" name="email" placeholder="Enter your email">
-                    <p class="invalid-feedback" style="color: red;">{{email_msg}}</p>
+                    <input type="text" id="email" name="email" placeholder="Enter your email" required>
+                    <p class="invalid-feedback" style="color: red;">{{ email_msg }}</p>
                 </div>
+
+                <!-- Contact Number Input -->
                 <div class="input-group">
                     <label for="contact">Contact No:</label>
                     <input type="tel" id="contact" name="contact" placeholder="Enter your Contact No" required>
                 </div>
-                <div class="input-group">
+
+                <!-- Password Input -->
+                <!-- Password Input -->
+                <div class="input-group password-container">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                    <p style="color: red;">{{p_m}}</p>
+                    <input class="text" type="password" name="password" id="password" placeholder="Password" required>
+                    <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                    <span class="text-red">{{ p_m }}</span>
                 </div>
-                <div class="input-group">
+
+                <!-- Confirm Password Input -->
+                <div class="input-group cpassword-container">
                     <label for="cpassword">Confirm Password:</label>
-                    <input type="password" id="cpassword" name="cpassword" placeholder="Enter your Confirm Password" required>
-                    <p style="color: red;">{{msg}}</p>
+                    <input class="text w3lpass" type="password" name="cpassword" id="cpassword"
+                        placeholder="Confirm Password" required>
+                    <span toggle="#cpassword" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                    <span class="text-red">{{ msg }}</span>
                 </div>
+
+
+                <!-- Submit Button -->
                 <button type="submit" class="login-btn" name="register">Register</button>
+
+                <!-- Footer Text for login link -->
                 <div class="footer-text">
-                    <p>Do have an account? <a href="{% url 'loginpage' %}">Login</a></p>
+                    <p>Do you have an account? <a href="{% url 'loginpage' %}">Login</a></p>
                 </div>
             </form>
         </div>
     </div>
+
+    <script>
+        // Script to toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(function (icon) {
+            icon.addEventListener('click', function () {
+                const passwordField = document.querySelector(this.getAttribute('toggle'));
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
+                } else {
+                    passwordField.type = 'password';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>
 {% endblock %}

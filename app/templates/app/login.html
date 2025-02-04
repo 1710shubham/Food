@@ -6,9 +6,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAYKA</title>
+    <link rel="shortcut icon" href="{% static 'images/food_logo.jpeg' %}" type="">
     <link href="https://fonts.googleapis.com/css2?family=Shanti&display=swap" rel="stylesheet"> <!-- Gujarati-style font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"> <!-- Clean modern font -->
     <link rel="stylesheet" href="{% static '/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Style for password input container */
+     .password-container {
+         position: relative;
+         width: 100%;
+     }
+     .cpassword-container {
+         position: relative;
+         width: 100%;
+     }
+     
+     /* Style for password visibility toggle icon */
+     .password-container .toggle-password {
+         position: absolute;
+         right: 10px;
+         top: 60%; /* Adjusted to center vertically */
+         transform: translateY(-50%); /* Ensures the icon is perfectly centered */
+         cursor: pointer;
+         color: #2e1010; /* Default color for icon */
+     }
+     .cpassword-container .toggle-password {
+         position: absolute;
+         right: 10px;
+         top: 40%; /* Adjusted to center vertically */
+         transform: translateY(-50%); /* Ensures the icon is perfectly centered */
+         cursor: pointer;
+         color: #2e1010; /* Default color for icon */
+     }
+     /* Input field styling */
+     .input-group input {
+         padding: 10px;
+         margin-bottom: 10px;
+         width: 100%;
+         border-radius: 5px;
+         border: 1px solid #ccc;
+         padding-right: 40px; /* Space for the icon */
+     }
+     
+     /* Optional: Style for error messages */
+     .text-red {
+         color: red;
+         font-size: 14px;
+     }
+     
+         </style>
 </head>
 <body>
     <div class="login-container">
@@ -26,11 +74,13 @@
                     <input type="text" id="email" name="email" placeholder="Enter your email" required>
 
                 </div>
-                <div class="input-group">
+                <div class="input-group password-container">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                    <p style="color: red;">{{msg}}</p>
+                    <input class="text" type="password" name="password" id="password" placeholder="Password" required>
+                    <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                    <span class="text-red">{{ msg }}</span>
                 </div>
+
                 <button type="submit" class="login-btn">Login</button>
                 <div class="footer-text">
                     <p>Don't have an account? <a href="{% url 'register'%}">Register</a></p>
@@ -38,6 +88,23 @@
             </form>
         </div>
     </div>
+    <script>
+        // Script to toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(function (icon) {
+            icon.addEventListener('click', function () {
+                const passwordField = document.querySelector(this.getAttribute('toggle'));
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
+                } else {
+                    passwordField.type = 'password';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 {% endblock %}

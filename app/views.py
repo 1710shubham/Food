@@ -88,12 +88,18 @@ def LogoutUser(request):
     return redirect('loginpage')
 
 def Menu(request):
+    if 'Name' not in request.session:
+        return redirect('loginpage')
     return render(request,"app/menu.html")
 
 def About(request):
+    if 'Name' not in request.session:
+        return redirect('loginpage')
     return render(request,"app/about.html")
 
 def Dash(request):
+     if 'Name' not in request.session:
+        return redirect('loginpage')
      total_users = User.objects.filter(Role=0).count()
      name = request.session.get('Name', '')
      return render(request, "app/dash.html", {'name': name,'total_users':total_users})
