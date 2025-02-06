@@ -1,10 +1,14 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 import re
+from .models import Admin
+from django.core.files.storage import FileSystemStorage
+from django_ratelimit.decorators import ratelimit
+
 # Create your views here.
 
 
@@ -81,7 +85,8 @@ def Index(request):
     if 'Name' not in request.session:
         return redirect('loginpage')
     name=request.session.get('Name','')
-    return render(request,"app/index.html",{'name':name})
+    food_items = Admin.objects.all().order_by('?')[:6]
+    return render(request, "app/index.html", {'name': name, 'food_items': food_items})
 
 def LogoutUser(request):
     request.session.flush()
@@ -90,7 +95,8 @@ def LogoutUser(request):
 def Menu(request):
     if 'Name' not in request.session:
         return redirect('loginpage')
-    return render(request,"app/menu.html")
+    food_items = Admin.objects.all()
+    return render(request,"app/menu.html",{'food_items':food_items})
 
 def About(request):
     if 'Name' not in request.session:
@@ -103,3 +109,59 @@ def Dash(request):
      total_users = User.objects.filter(Role=0).count()
      name = request.session.get('Name', '')
      return render(request, "app/dash.html", {'name': name,'total_users':total_users})
+
+
+
+#====ADMIN SIDE======#
+
+def AdminOrder(request):
+    if request.method == "POST":
+        food_name = request.POST['food_name']
+        food_description = request.POST['food_description']
+        food_price = request.POST['food_price']
+        food_category = request.POST['food_category']
+        food_image = request.FILES['food_image']  # Handle file upload
+        
+        # Save the food item to the database
+        new_food_item = Admin.objects.create(
+            Food_Name=food_name,
+            Food_Description=food_description,
+            Food_Price=food_price,
+            Food_Category=food_category,
+            Food_Image=food_image  # The image will be automatically saved in MEDIA_ROOT/food_images/
+        )
+        return render(request, "app/form_admin.html", {'messages': 'Food Item Added Successfully!'})
+
+    return render(request, "app/form_admin.html")
+
+
+def FormAdmin(request):
+    food_items = Admin.objects.all()
+    return render(request, "app/form_admin.html",{'food_items':food_items})
+
+def EditAdmin(request, food_id):
+    food = get_object_or_404(Admin, id=food_id)
+    return render(request, "app/edit_admin.html", {'food': food})
+
+def Update(request,id):
+    food = get_object_or_404(Admin, id=id)
+    if request.method == "POST":
+        food_name = request.POST['food_name']
+        food_description = request.POST['food_description']
+        food_price = request.POST['food_price']
+        food_category = request.POST['food_category']
+        food_image = request.FILES['food_image']  # Handle file upload
+        
+        # Save the food item to the database
+        food.Food_Name = food_name
+        food.Food_Description = food_description
+        food.Food_Price = food_price
+        food.Food_Category = food_category
+
+        # Only update the image if a new one was uploaded
+        if food_image:
+            food.Food_Image = food_image  # Save the new image
+
+        food.save() 
+        return render(request,"app/form_admin.html",{'messages': 'Food Item Updated Successfully!'})
+#====ADMIN SIDE======#

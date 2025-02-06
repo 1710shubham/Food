@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path,include
 from .import views
 
@@ -11,6 +13,9 @@ urlpatterns = [
     path("menu/", views.Menu, name="menu"),
     path("about/", views.About, name="about"),
     path("dash/", views.Dash, name="dash"),
+    path('admin_order/', views.AdminOrder, name='admin_order'),
+    path('form_admin/', views.FormAdmin, name='form_admin'),
+    path('edit_admin/<int:food_id>/', views.EditAdmin, name='edit_admin'),
+    path('update/<int:id>/',views.Update,name='update')    
 
-
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
