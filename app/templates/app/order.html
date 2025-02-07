@@ -1,0 +1,40 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oreder</title>
+</head>
+<body>
+        <!-- In your existing template, add a form to place an order -->
+{% for food in food_items %}
+<div class="col-sm-6 col-lg-4 all {{ food.category|lower }}">
+    <div class="box">
+        <div>
+            <div class="img-box">
+                <img src="{{ food.image.url }}" alt="{{ food.name }}">
+            </div>
+            <div class="detail-box">
+                <h5>{{ food.name }}</h5>
+                <p>{{ food.description }}</p>
+                <div class="options">
+                    <h6>${{ food.price }}</h6>
+                    <!-- Order form for each item -->
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="food_item" value="{{ food.id }}">
+                        <input type="number" name="quantity" value="1" min="1" required>
+                        <button type="submit">Order</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</body>
+</html>
+{% endblock %}

@@ -16,6 +16,12 @@ urlpatterns = [
     path('admin_order/', views.AdminOrder, name='admin_order'),
     path('form_admin/', views.FormAdmin, name='form_admin'),
     path('edit_admin/<int:food_id>/', views.EditAdmin, name='edit_admin'),
-    path('update/<int:id>/',views.Update,name='update')    
+    path('update/<int:id>/',views.Update,name='update'),    
+    path('delete/<int:id>/',views.Delete,name='delete'),
+    path('password-reset/', views.password_reset_request, name='password_reset_request'),
+    path('reset-password/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('place_order/<int:food_id>/', views.place_order, name='place_order'),
+    path('order_success/', views.order_success, name='order_success'),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

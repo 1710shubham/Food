@@ -6,11 +6,32 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 import re
 from .models import Admin
-from django.core.files.storage import FileSystemStorage
-from django_ratelimit.decorators import ratelimit
+from .models import User
+from .forms import OrderForm
+# from django.core.files.storage import FileSystemStorage
+# from django_ratelimit.decorators import ratelimit
+
+
 
 # Create your views here.
+def place_order(request, food_id):
+    food_item = get_object_or_404(Admin, id=food_id)
 
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            # Get the currently logged-in user
+            user = request.user  # Assuming the user is authenticated
+            form.save(user=user)  # Save the order with the user information
+            return redirect('order_success')  # Redirect to a success page
+
+    else:
+        form = OrderForm(initial={'food_item': food_item})  # Pre-fill the food item
+
+    return render(request, "app/order.html", {'form': form, 'food_item': food_item})
+
+def order_success(request):
+    return render(request, "app/order_success.html")
 
 
 
@@ -35,7 +56,7 @@ def UserRegister(request):
             password_msg = "Password must contain at least one special character (@, $, !, %, *, ?, &)."
             return render(request,"app/register.html",{'p_m':password_msg})
 
-        user = User.objects.filter(Email=email).first()
+        user = User.objects.filter(email=email).first()
 
         if user:
             email_msg = "User Already Exists"
@@ -44,10 +65,10 @@ def UserRegister(request):
             if password == cpassword:
                 hashed_password =make_password(password)
                 new_user = User.objects.create(
-                    Name = name,
-                    Email = email,
-                    Contact = contact,
-                    Password=hashed_password
+                    name = name,
+                    email = email,
+                    contact = contact,
+                    password=hashed_password
                 )
                 return render(request,"app/login.html")
             else:
@@ -59,10 +80,10 @@ def LoginUser(request):
         email = request.POST['email']
         password = request.POST['password']
         try:
-            user = User.objects.get(Email=email)
-            if check_password(password, user.Password):
-                request.session['Name'] = user.Name
-                request.session['Email'] = user.Email
+            user = User.objects.get(email=email)
+            if check_password(password, user.password):
+                request.session['name'] = user.name
+                request.session['email'] = user.email
                 request.session['Role'] = user.Role
                 if user.Role == 0:
                  return redirect('index')
@@ -82,9 +103,9 @@ def RegisterPage(request):
     return render(request,"app/register.html")
 
 def Index(request):
-    if 'Name' not in request.session:
+    if 'name' not in request.session:
         return redirect('loginpage')
-    name=request.session.get('Name','')
+    name=request.session.get('name','')
     food_items = Admin.objects.all().order_by('?')[:6]
     return render(request, "app/index.html", {'name': name, 'food_items': food_items})
 
@@ -93,22 +114,23 @@ def LogoutUser(request):
     return redirect('loginpage')
 
 def Menu(request):
-    if 'Name' not in request.session:
+    if 'name' not in request.session:
         return redirect('loginpage')
     food_items = Admin.objects.all()
     return render(request,"app/menu.html",{'food_items':food_items})
 
 def About(request):
-    if 'Name' not in request.session:
+    if 'name' not in request.session:
         return redirect('loginpage')
     return render(request,"app/about.html")
 
 def Dash(request):
-     if 'Name' not in request.session:
+     if 'name' not in request.session:
         return redirect('loginpage')
      total_users = User.objects.filter(Role=0).count()
-     name = request.session.get('Name', '')
+     name = request.session.get('name', '')
      return render(request, "app/dash.html", {'name': name,'total_users':total_users})
+
 
 
 
@@ -164,4 +186,76 @@ def Update(request,id):
 
         food.save() 
         return render(request,"app/form_admin.html",{'messages': 'Food Item Updated Successfully!'})
+
+
+def Delete(request, id):
+    # Fetch the existing food item by id
+    food = get_object_or_404(Admin, id=id)
+    
+    # Delete the food item
+    food.delete()
+    
+    # After deletion, redirect to another page (for example, a list page)
+    return render(request,"app/form_admin.html",{'messages': 'Food Item Deleted Successfully!'})
+
 #====ADMIN SIDE======#
+
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth import password_validation
+
+def password_reset_request(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+
+        if user:
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(str(user.pk).encode())
+            reset_url = f"{get_current_site(request).domain}/reset-password/{uid}/{token}/"
+
+            subject = "Password Reset Request"
+            message = f"Click the link to reset your password: {reset_url}"
+            send_mail(subject, message, 'skmalani05@gmail.com', [email])
+
+            return HttpResponse("A password reset link has been sent to your email.")
+        else:
+            return HttpResponse("User with this email does not exist.")
+    return render(request, "app/password_reset_request.html")
+
+
+
+
+
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth import get_user_model
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            new_password = request.POST.get('new_password')
+
+            # Validate password strength
+            try:
+                password_validation.validate_password(new_password, user)
+            except Exception as e:
+                return HttpResponse(f"Password validation error: {str(e)}")
+
+            # Update the password
+            user.password = make_password(new_password)
+            user.save()
+
+            return redirect('loginpage')
+        return render(request, "app/password_reset_confirm.html")
+    else:
+        return HttpResponse("The link is invalid or has expired.")
+
